@@ -1,7 +1,7 @@
 import streamlit as st
 import pickle
 import numpy as np
-from sklearn.preprocessing import LabelEncoder
+
 
 
 # Load the model
@@ -87,7 +87,7 @@ def main():
             return
 
     # Encode Gender (Label Encoding: Male=0, Female=1, Others=2)
-    le = LabelEncoder()
+   
     gender_encoded = le.fit_transform(["Male", "Female", "Others"])
     gender = le.transform([gender])[0]
 
