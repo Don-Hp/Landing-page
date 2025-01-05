@@ -5,7 +5,7 @@ from sklearn.preprocessing import LabelEncoder
 
 
 # Load the model
-url = 'https://raw.githubusercontent.com/Templearikpo/Diabetes-Prediction-App/main/diabetes_prediction_dataset.pkl'
+model = 'https://raw.githubusercontent.com/Templearikpo/Diabetes-Prediction-App/main/diabetes_prediction_dataset.pkl'
 
 def main():
     # App title and description
