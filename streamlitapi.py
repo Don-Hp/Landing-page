@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.preprocessing import LabelEncoder
 
 # Load the model
- model= pickle.load(open('C:/Code/DPM/Model/diabetes_prediction_dataset.pkl', 'rb'))
+model= pickle.load(open('C:/Code/DPM/Model/diabetes_prediction_dataset.pkl', 'rb'))
 
 def main():
     # App title and description
