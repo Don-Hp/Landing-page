@@ -1,12 +1,16 @@
 import streamlit as st
 import pickle
 import numpy as np
+import requests
+from io import BytesIO
 from sklearn.preprocessing import LabelEncoder
 
 
 # Load the model
-2 = 'https://raw.githubusercontent.com/Templearikpo/Diabetes-Prediction-App/main/diabetes_prediction_dataset.pkl'
+url = 'https://raw.githubusercontent.com/Templearikpo/Diabetes-Prediction-App/main/diabetes_prediction_dataset.pkl'
+response = requests.get(url)
 
+model = pickle.load(BytesIO(response.content))
 def main():
     # App title and description
     
