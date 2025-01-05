@@ -2,7 +2,6 @@ import streamlit as st
 import pickle
 import requests
 import numpy as np
-from sklearn.preprocessing import LabelEncoder
 
 # URL for the pickle file
 url = 'https://raw.githubusercontent.com/Templearikpo/Diabetes-Prediction-App/main/diabetes_prediction_dataset.pkl'
