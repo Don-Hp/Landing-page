@@ -3,7 +3,6 @@ import pickle
 import requests
 import io
 import numpy as np
-from sklearn.preprocessing import LabelEncoder
 
 url = 'https://raw.githubusercontent.com/Templearikpo/Diabetes-Prediction-App/main/diabetes_prediction_dataset.pkl'
 
