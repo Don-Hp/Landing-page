@@ -1,40 +1,48 @@
 import streamlit as st
 import pickle
 import requests
-import io
 import numpy as np
+from sklearn.preprocessing import LabelEncoder
 
+# URL for the pickle file
 url = 'https://raw.githubusercontent.com/Templearikpo/Diabetes-Prediction-App/main/diabetes_prediction_dataset.pkl'
 
 # Fetch the file content from the URL
-response = requests.get(url)
-
-# Ensure the request was successful
 try:
     response = requests.get(url)
     response.raise_for_status()  # Raise HTTPError for bad responses (4xx and 5xx)
 
-    # Deserialize the pickle file from the response content
-    model = pickle.loads(response.content)
+    # Save the pickle content to a temporary file and load it
+    with open("diabetes_model.pkl", "wb") as f:
+        f.write(response.content)
+
+    with open("diabetes_model.pkl", "rb") as f:
+        model = pickle.load(f)
+
     print("Model loaded successfully!")
 except requests.exceptions.RequestException as e:
     print(f"Error fetching the file from URL: {e}")
+    model = None
 except pickle.UnpicklingError as e:
     print(f"Error unpickling the file: {e}")
-    
+    model = None
+
+# Streamlit app
 def main():
+    if model is None:
+        st.error("The prediction model could not be loaded. Please check the source file.")
+        return
+
     # App title and description
-    
     st.set_page_config(page_title="Diabetes Prediction System", page_icon="🩺", layout="centered")
-    
-    
+
     st.markdown(
         """
         <style>
          body {
             background-color: #f4f9f4; /* Soft green background for health theme */
             background-image: url('https://images.unsplash.com/photo-1565376987447-22a3a490b809?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080'); 
-            background-size: cover; /* Ensures the image covers the entire screen */
+            background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
         }
@@ -74,8 +82,8 @@ def main():
     )
     
     st.markdown('<div class="title-container"><h1>🩺 Diabetes Prediction System</h1></div>', unsafe_allow_html=True)
+
     # Layout for user input
-   
     st.header("Enter Patient Data")
 
     # Input fields for patient data
@@ -90,7 +98,7 @@ def main():
         "Smoking History",
         ["No Info", "Current", "Ever", "Former", "Never", "Not Current"]
     )
-   
+
     # Convert inputs to numeric
     try:
         age = int(age)
@@ -101,29 +109,27 @@ def main():
         st.error("Please enter valid numeric values for age, BMI, HbA1c, and blood glucose.")
         return
 
-    # Encode Gender (Label Encoding: Male=0, Female=1, Others=2)
+    # Encode Gender
     le = LabelEncoder()
     gender_encoded = le.fit_transform(["Male", "Female", "Others"])
     gender = le.transform([gender])[0]
 
-    # One-Hot Encoding for Smoking History (6 categories)
+    # One-Hot Encoding for Smoking History
     smoking_history_encoded = [0] * 6
     smoking_categories = ["No Info", "Current", "Ever", "Former", "Never", "Not Current"]
     smoking_history_encoded[smoking_categories.index(smoking_history)] = 1
 
-    # Prepare the input features (13 features in total)
+    # Prepare the input features
     inputs = [
-        gender,          # 1 feature for gender
-        age,             # 1 feature for age
-        hypertension,    # 1 feature for hypertension
-        heart_disease,   # 1 feature for heart disease
-        bmi,             # 1 feature for BMI
-        HbA1c_level,     # 1 feature for HbA1c level
-        blood_glucose_level, # 1 feature for blood glucose level
-        *smoking_history_encoded # 6 features for smoking history
+        gender,
+        age,
+        hypertension,
+        heart_disease,
+        bmi,
+        HbA1c_level,
+        blood_glucose_level,
+        *smoking_history_encoded
     ]
-
-    # Reshape inputs to ensure it has the correct shape (1, 13)
     inputs = np.array(inputs).reshape(1, -1)
 
     st.subheader("Patient Data Summary")
@@ -145,9 +151,7 @@ def main():
             else:
                 result = "This patient is NOT AT RISK of diabetes. Continue a healthy lifestyle with a balanced diet and regular exercise."
             
-            # Display result with increased font size
             st.markdown(f'<div class="result">{result}</div>', unsafe_allow_html=True)
-
         except Exception as e:
             st.error(f"Error during prediction: {e}")
 
@@ -160,12 +164,6 @@ def main():
         """, 
         unsafe_allow_html=True
     )
-
-
-# Run the app
-if __name__ == "__main__":
-    main()
-
 
 # Run the app
 if __name__ == "__main__":
