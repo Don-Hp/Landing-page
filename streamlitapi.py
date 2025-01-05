@@ -128,7 +128,7 @@ def main():
     # Make prediction
     if st.button("Predict"):
         try:
-            prediction = 2.predict(inputs)
+            prediction = model.predict(inputs)
             if prediction[0] == 1:
                 result = "This patient is AT RISK of diabetes. Please, consult a medical professional."
             else:
