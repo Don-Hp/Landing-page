@@ -4,7 +4,7 @@ import numpy as np
 
 
 # Load the model
-model= pickle.load(open('C:/Code/DPM/Model/diabetes_prediction_dataset.pkl', 'rb'))
+url = 'https://raw.githubusercontent.com/Templearikpo/Diabetes-Prediction-App/main/diabetes_prediction_dataset.pkl'
 
 def main():
     # App title and description
