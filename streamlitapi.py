@@ -5,7 +5,7 @@ from sklearn.preprocessing import LabelEncoder
 
 
 # Load the model
-url = 'https://raw.githubusercontent.com/Templearikpo/Diabetes-Prediction-App/main/diabetes_prediction_dataset.pkl'
+2 = 'https://raw.githubusercontent.com/Templearikpo/Diabetes-Prediction-App/main/diabetes_prediction_dataset.pkl'
 
 def main():
     # App title and description
@@ -124,7 +124,7 @@ def main():
     # Make prediction
     if st.button("Predict"):
         try:
-            prediction = url.predict(inputs)
+            prediction = 2.predict(inputs)
             if prediction[0] == 1:
                 result = "This patient is AT RISK of diabetes. Please, consult a medical professional."
             else:
