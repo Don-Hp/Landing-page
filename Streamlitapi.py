@@ -1,11 +1,28 @@
 import streamlit as st
 import pickle
+import requests
+import io
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 
-# Load the model
-model = pickle.load(open('c:/Code/DPM/Model/diabetes_prediction_dataset.pkl', 'rb'))
+url = 'https://raw.githubusercontent.com/Templearikpo/Diabetes-Prediction-App/main/diabetes_prediction_dataset.pkl'
 
+# Fetch the file content from the URL
+response = requests.get(url)
+
+# Ensure the request was successful
+try:
+    response = requests.get(url)
+    response.raise_for_status()  # Raise HTTPError for bad responses (4xx and 5xx)
+
+    # Deserialize the pickle file from the response content
+    model = pickle.loads(response.content)
+    print("Model loaded successfully!")
+except requests.exceptions.RequestException as e:
+    print(f"Error fetching the file from URL: {e}")
+except pickle.UnpicklingError as e:
+    print(f"Error unpickling the file: {e}")
+    
 def main():
     # App title and description
     
@@ -143,6 +160,13 @@ def main():
         </div>
         """, 
         unsafe_allow_html=True
+    )
+
+
+# Run the app
+if __name__ == "__main__":
+    main()
+
     )
 
 
