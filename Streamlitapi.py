@@ -94,13 +94,13 @@ def main():
    
     # Convert inputs to numeric
     try:
-            age = int(age)
-            bmi = float(bmi)
-            HbA1c_level = float(HbA1c_level)
-            blood_glucose_level = float(blood_glucose_level)
+        age = int(age)
+        bmi = float(bmi)
+        HbA1c_level = float(HbA1c_level)
+        blood_glucose_level = float(blood_glucose_level)
     except ValueError:
-            st.error("Please enter valid numeric values for age, BMI, HbA1c, and blood glucose.")
-            return
+        st.error("Please enter valid numeric values for age, BMI, HbA1c, and blood glucose.")
+        return
 
     # Encode Gender (Label Encoding: Male=0, Female=1, Others=2)
     le = LabelEncoder()
@@ -166,8 +166,6 @@ def main():
 # Run the app
 if __name__ == "__main__":
     main()
-
-    )
 
 
 # Run the app
