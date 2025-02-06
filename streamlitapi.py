@@ -11,11 +11,21 @@ url = 'https://raw.githubusercontent.com/Templearikpo/Diabetes-Prediction-App/ma
 response = requests.get(url)
 
 model = pickle.load(BytesIO(response.content))
+def calculate_bmi(weight, height):
+    try:
+        weight = float(weight)
+        height = float(height)
+        if height <= 0:
+            st.error("Height must be greater than zero.")
+            return None
+        return round(weight / (height ** 2), 2)
+    except ValueError:
+        st.error("Please enter valid numeric values for weight and height.")
+        return None
+
 def main():
     # App title and description
-    
     st.set_page_config(page_title="Diabetes Prediction System", page_icon="🩺", layout="centered")
-    
     
     st.markdown(
         """
@@ -64,7 +74,7 @@ def main():
     
     st.markdown('<div class="title-container"><h1>🩺 Diabetes Prediction System</h1></div>', unsafe_allow_html=True)
     # Layout for user input
-   
+    
     st.header("Enter Patient Data")
 
     # Input fields for patient data
@@ -72,47 +82,49 @@ def main():
     age = st.text_input("Age", "0")
     hypertension = st.selectbox("Hypertension", [0, 1], format_func=lambda x: "Yes" if x == 1 else "No")
     heart_disease = st.selectbox("Heart Disease", [0, 1], format_func=lambda x: "Yes" if x == 1 else "No")
-    bmi = st.text_input("Body Mass Index (BMI)", "0.0")
+    
+    weight = st.text_input("Weight (kg)", "0.0")
+    height = st.text_input("Height (m)", "0.0")
+    
+    if st.button("Calculate BMI"):
+        bmi = calculate_bmi(weight, height)
+        if bmi is not None:
+            st.success(f"BMI: {bmi}")
+    else:
+        bmi = "0.0"
+    
     HbA1c_level = st.text_input("HbA1c Level", "0.0")
     blood_glucose_level = st.text_input("Blood Glucose Level", "0.0")
-    smoking_history = st.selectbox(
-        "Smoking History",
-        ["No Info", "Current", "Ever", "Former", "Never", "Not Current"]
-    )
-   
-    # Convert inputs to numeric
+    smoking_history = st.selectbox("Smoking History", ["No Info", "Current", "Ever", "Former", "Never", "Not Current"])
+    
     try:
-            age = int(age)
-            bmi = float(bmi)
-            HbA1c_level = float(HbA1c_level)
-            blood_glucose_level = float(blood_glucose_level)
+        age = int(age)
+        bmi = float(bmi)
+        HbA1c_level = float(HbA1c_level)
+        blood_glucose_level = float(blood_glucose_level)
     except ValueError:
-            st.error("Please enter valid numeric values for age, BMI, HbA1c, and blood glucose.")
-            return
+        st.error("Please enter valid numeric values for age, HbA1c, and blood glucose.")
+        return
 
-    # Encode Gender (Label Encoding: Male=0, Female=1, Others=2)
     le = LabelEncoder()
     gender_encoded = le.fit_transform(["Male", "Female", "Others"])
     gender = le.transform([gender])[0]
 
-    # One-Hot Encoding for Smoking History (6 categories)
     smoking_history_encoded = [0] * 6
     smoking_categories = ["No Info", "Current", "Ever", "Former", "Never", "Not Current"]
     smoking_history_encoded[smoking_categories.index(smoking_history)] = 1
 
-    # Prepare the input features (13 features in total)
     inputs = [
-        gender,          # 1 feature for gender
-        age,             # 1 feature for age
-        hypertension,    # 1 feature for hypertension
-        heart_disease,   # 1 feature for heart disease
-        bmi,             # 1 feature for BMI
-        HbA1c_level,     # 1 feature for HbA1c level
-        blood_glucose_level, # 1 feature for blood glucose level
-        *smoking_history_encoded # 6 features for smoking history
+        gender,
+        age,
+        hypertension,
+        heart_disease,
+        bmi,
+        HbA1c_level,
+        blood_glucose_level,
+        *smoking_history_encoded
     ]
 
-    # Reshape inputs to ensure it has the correct shape (1, 13)
     inputs = np.array(inputs).reshape(1, -1)
 
     st.subheader("Patient Data Summary")
@@ -125,7 +137,6 @@ def main():
     st.write(f"**Blood Glucose Level:** {blood_glucose_level}")
     st.write(f"**Smoking History:** {smoking_history}")
 
-    # Make prediction
     if st.button("Predict"):
         try:
             prediction = model.predict(inputs)
@@ -134,13 +145,10 @@ def main():
             else:
                 result = "This patient is NOT AT RISK of diabetes. Continue a healthy lifestyle with a balanced diet and regular exercise."
             
-            # Display result with increased font size
-            st.markdown(f'<div class="result">{result}</div>', unsafe_allow_html=True)
-
+            st.markdown(f'<h2 style="color: green;">{result}</h2>', unsafe_allow_html=True)
         except Exception as e:
             st.error(f"Error during prediction: {e}")
 
-    # Footer
     st.markdown(
         """
         <div class="footer">
@@ -150,10 +158,9 @@ def main():
         unsafe_allow_html=True
     )
 
-
-# Run the app
 if __name__ == "__main__":
     main()
+
 
    
     
