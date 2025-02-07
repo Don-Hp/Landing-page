@@ -17,11 +17,23 @@ def calculate_bmi(weight, height):
         height = float(height)
         if height <= 0:
             st.error("Height must be greater than zero.")
-            return None
-        return round(weight / (height ** 2), 2)
+            return None, None
+        bmi = round(weight / (height ** 2), 2)
+        
+        # Determine BMI category
+        if bmi < 18.5:
+            category = "Underweight"
+        elif 18.5 <= bmi < 24.9:
+            category = "Normal weight"
+        elif 25 <= bmi < 29.9:
+            category = "Overweight"
+        else:
+            category = "Obese"
+        
+        return bmi, category
     except ValueError:
         st.error("Please enter valid numeric values for weight and height.")
-        return None
+        return None, None
 
 def main():
     # App title and description
@@ -87,11 +99,11 @@ def main():
     height = st.text_input("Height (m)", "0.0")
     
     if st.button("Calculate BMI"):
-        bmi = calculate_bmi(weight, height)
+        bmi, category = calculate_bmi(weight, height)
         if bmi is not None:
-            st.success(f"BMI: {bmi}")
+            st.success(f"BMI: {bmi} ({category})")
     else:
-        bmi = "0.0"
+        bmi, category = 0.0, "N/A"
     
     HbA1c_level = st.text_input("HbA1c Level", "0.0")
     blood_glucose_level = st.text_input("Blood Glucose Level", "0.0")
